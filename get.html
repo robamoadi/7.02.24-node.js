@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>GET</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>POSTS </h2>
+    <table id="posts_table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>TITLE</th>
+                <th>AUTHOR</th>
+                <th>BODY</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- the data from the REST API will be here-->
+        </tbody>
+    </table>
+    <br />
+    POST ID: <input type="number" id="post_id" onkeyup="get_posts()">&nbsp;
+    <button id="get_posts_btn" onclick="get_posts()">GET POST BY ID</button>
+    <script>
+        function get_posts() {
+            // 1 fire request
+            //   when finished then ............. future ... 5 ..
+            // fetch ('http://localhost:3000/posts')         -- open connection stream to server 
+            //          then (response => {response.json()}) -- bring me the jsons
+            //          then (data => { ... })
+
+            //const id = undefined
+            fetch('http://localhost:3000/posts/' + document.getElementById('post_id').value)   // returns response
+                .then(response => {
+
+                    // if not find post with this id -- the status will be 404
+                    // if (response.status === 404) {
+                    // return null, because cannot json() when no result was returned
+                    //  return null;
+                    //}
+                    return response.json()
+                })
+                // returns data - array of jsons 
+                .then(posts => {
+                    console.log(posts);
+                    const tbody = document.getElementById('posts_table').getElementsByTagName('tbody')
+                    tbody[0].innerHTML = '';
+
+                    // if not found and got null in the previous step then do nothing -- return
+                    /* if (posts == null)
+                         return;
+ */
+                    if (Array.isArray(posts) == false) {
+                        posts = [posts]
+                    }
+                    posts.forEach(post => {
+                        //document.write(JSON.stringify(post)+ "<br /> <br />")
+
+                        const new_row = document.createElement('tr')
+
+                        const cell_id = document.createElement('td')
+                        cell_id.textContent = post.id
+                        new_row.appendChild(cell_id)
+
+                        const cell_title = document.createElement('td')
+                        cell_title.textContent = post.title
+                        new_row.appendChild(cell_title)
+
+                        const cell_author = document.createElement('td')
+                        cell_author.textContent = post.author
+                        new_row.appendChild(cell_author)
+
+                        const cell_body = document.createElement('td')
+                        cell_body.textContent = post.body
+                        new_row.appendChild(cell_body)
+
+                        //console.log(tbody);
+                        tbody[0].appendChild(new_row)
+
+                        /*
+                        {"id":"1","title":"The Joy of Gardening","author":"Alice Johnson","body":"Gardening is more than just a hobby; it's a way of life. The satisfaction of watching your plants grow and flourish is unparalleled. This weekend, I embarked on a new project to expand my vegetable garden, and the journey was filled with challenges and triumphs. Here's to more green in our lives!"}
+                        */
+
+                    });
+
+                })
+            // 2 do this
+            console.log("this happens before the fetch finished");
+            // 3 do this
+            // 4 do this
+        }
+        get_posts();
+    </script>
+</body>
+
+</html>
